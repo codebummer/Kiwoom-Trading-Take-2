@@ -21,7 +21,7 @@ def main():
     df_to_db(transaction_req.results_df, 'daily_records.db', 'Daily_Prices')
     
     # kiwoom4
-    # visualizes received responses in grphics
+    # visualizes received responses in graphics
     visualize_finplot(transaction_req.results_df)
     visualize_plotly(transaction_req.results_df)
     # visualize_mplfinance(transaction_req.results_df)
