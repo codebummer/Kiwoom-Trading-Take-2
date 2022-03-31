@@ -35,11 +35,12 @@ class Kiwoom(QAxWidget):
         self.login_loop.exit()
         print('login loop exited')
     
- 
-    
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     # kiwoom = Kiwoom()
+def connect_handler_excute():
+    app = QApplication(sys.argv)
+    kiwoom = Kiwoom()
+
+if __name__ == '__main__':
+    connect_handler_excute()
     
 
 
