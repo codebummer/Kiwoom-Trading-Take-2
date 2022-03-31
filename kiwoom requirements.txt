@@ -1,0 +1,8 @@
+Python 3.7.1. - 32bit
+
+pyqt5==5.12.1
+pyqtwebengine==5.12.1
+pywin32
+openpyxl
+pykiwoom
+jupyterlab or jupyter
