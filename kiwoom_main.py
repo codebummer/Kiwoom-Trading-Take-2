@@ -27,7 +27,7 @@ def main():
     # visualize_mplfinance(transaction_req.results_df)
 
     # kiwoom5
-    # back tests strategies employeed
+    # backtests strategies employed
     
 
 
