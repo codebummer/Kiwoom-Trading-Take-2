@@ -91,22 +91,13 @@ def comm_requsts_handler(self, set_inputs, comm_inputs):
         inputs(self, set_inputs)
         self.comm_request_data(*comm_inputs)
 
-
+def connect_trans_handler_execute():
+    app = QApplication(sys.argv)
+    transaction_req = tr_requests()
+    comm_requsts_handler(transaction_req, opt_10081_set_inputs, opt_10081_comm_inputs)
+    return transaction_req
 
 
 if __name__ == '__main__':
-    transaction_req = tr_requests()
-    comm_requsts_handler(transaction_req, opt_10081_set_inputs, opt_10081_comm_inputs)
-    df_to_db(transaction_req.results_df, 'daily_records.db', 'Daily_Prices')
-    visualize_finplot(transaction_req.results_df)
-    visualize_plotly(transaction_req.results_df)
-    visualize_mplfinance(transaction_req.results_df)
-
-
-
-
-
-    
-    
-
+    connect_trans_handler_execute()
 
