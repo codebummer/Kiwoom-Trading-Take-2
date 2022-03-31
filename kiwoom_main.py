@@ -8,14 +8,11 @@ from kiwoom3 import *
 from kiwoom4 import *
 from kiwoom5 import *
 
-def main():
-    app = QApplication(sys.argv)
-    
+def main(): 
     # kiwoom1 and kiwoom2
     # kiwoom1 establishes connection to the Kiwoom server
     # kiwoom2 requests transactions and receives responses
-    transaction_req = tr_requests()
-    comm_requsts_handler(transaction_req, opt_10081_set_inputs, opt_10081_comm_inputs)
+    transaction_req = connect_trans_handler_execute()
     
     # kiwoom3
     # saves received responses to a dababase file
@@ -29,7 +26,7 @@ def main():
 
     # kiwoom5
     # backtests strategies employed
-    
+
 
 
 
