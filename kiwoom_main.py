@@ -10,15 +10,25 @@ from kiwoom5 import *
 
 def main():
     app = QApplication(sys.argv)
-
+    
+    # kiwoom1 and kiwoom2
+    # establishes connection to the Kiwoom server, requests transactions, receives responses
     transaction_req = tr_requests()
     comm_requsts_handler(transaction_req, opt_10081_set_inputs, opt_10081_comm_inputs)
     
+    # kiwoom3
+    # saves received responses to a dababase file
     df_to_db(transaction_req.results_df, 'daily_records.db', 'Daily_Prices')
     
+    # kiwoom4
+    # visualizes received responses in grphics
     visualize_finplot(transaction_req.results_df)
     visualize_plotly(transaction_req.results_df)
     # visualize_mplfinance(transaction_req.results_df)
+
+    # kiwoom5
+    # back tests strategies employeed
+    
 
 
 
