@@ -1,5 +1,5 @@
-# DEVELOOPED_MODULE_NUMBER = 5
-# for module_num in range(DEVELOOPED_MODULE_NUMBER):
+# DEVELOPED_MODULE_NUMBER = 5
+# for module_num in range(DEVELOPED_MODULE_NUMBER):
 #     mod_name = 'kiwoom' + str(module_num+1)
 #     from mod_name import *
 
