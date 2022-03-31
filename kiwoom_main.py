@@ -12,7 +12,8 @@ def main():
     app = QApplication(sys.argv)
     
     # kiwoom1 and kiwoom2
-    # establishes connection to the Kiwoom server, requests transactions, receives responses
+    # kiwoom1 establishes connection to the Kiwoom server
+    # kiwoom2 requests transactions and receives responses
     transaction_req = tr_requests()
     comm_requsts_handler(transaction_req, opt_10081_set_inputs, opt_10081_comm_inputs)
     
