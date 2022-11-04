@@ -38,7 +38,7 @@ class MyStrategy(bt.Strategy):
                 self.log(
                     f'SELL: Price {order.executed.price:,.0f}KRW, '
                     f'Sold {order.executed.size:,.0f} shares, '
-                    f'fees {order.executed.comm:,.0f}KRW, '
+                    f'Fees {order.executed.comm:,.0f}KRW, '
                     f'Current Value {cerebro.broker.getvalue():,.0f}KRW'
                 )
             self.bar_executed = len(self)
