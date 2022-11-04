@@ -61,6 +61,8 @@ class MyStrategy(bt.Strategy):
     def log(self, text, dt=None):
         dt = self.datas[0].datetime.date(0)
         print(f'[{dt.isoformat()}] {text}')
+        # date.isoformat() return a string representing the date in ISO 8601 format, YYYY-MM-DD:
+        
 
 start = datetime(2019, 1, 1)
 end = datetime(2022, 11, 4)
