@@ -80,4 +80,4 @@ print(f'Initial Portfolio Value: {cerebro.broker.getvalue():,.0f}KRW')
 cerebro.run()
 
 print(f'Final Portfolio Value : {cerebro.broker.getvalue():,0.f}KRW')
-cerebro.plot()
+cerebro.plot(style='candlestick')
