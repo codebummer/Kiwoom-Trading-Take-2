@@ -1,0 +1,14 @@
+To run this code without errors,
+
+"matplotlib" should be the version 3.2.2
+
+Since "backtrader.feed.YahooFinanceData" does not work,
+
+"backtrader.feed.PandasData" should be used with "yfinance" as an argument.
+This is explained below:
+
+import pandas as pd
+import yfinance
+
+data = bt.feeds.YahooFinanceData(dataname='005930.KS', fromdate=start, todate=end) ----> not working
+data = bt.feeds.PandasData(dataname=yfinance.download('005930.KS', start, end)) ----> working
