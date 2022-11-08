@@ -17,10 +17,11 @@ class InvestEval():
         past_sellID = the same as above
         '''               
         self.orders = past_orders
-        self.size_of_order = []
-        #self.size_of_order is a list that keeps 2 elements to track the amount or the number of shares for each order.
-        #self.size_of_order[0]: the amount of each order
+        self.size_of_order = [0, 0, 0]
+        #self.size_of_order is a list that keeps 3 elements to track the amount or the number of shares for each order.
+        #self.size_of_order[0]: the amount of each order floored by the mutiplication of price and shares
         #self.size_of_order[1]: the number of shares for each order. This will be the primary indicator to use in trading.
+        #self.size_of_order[2]: the price of one share for each order
         
         
         #The following if blocks determine whether there are any past records passed on and process accordingly.
@@ -126,33 +127,57 @@ class InvestEval():
         return self.size_of_order    
     
     def set_size_of_order(self, size_of_order):
-        self.size_of_order = self._calculate_size_of_order(size_of_order)
+        self._calculate_size_of_order(size_of_order)
     
-    def _calculate_size_of_order(self, price=0, size_of_order=0):
+    def _calculate_size_of_order(self, size_of_order=[], price=0): 
+        # 'price=0' is after 'size_of_order=0', because 'set_size_of_order' only gives one value while the current function takes only one.
+        # Except when a user manually input the arguments, normally 'set_size_of_order' will take the 'price' value sent,
+        # unless the order of the arguments are 'size_of_order=0' first and 'price=0' later.      
+       
+        #The argument 'price' is still in the function even though the primary calling function 'set_size_of_order' does not give that value.
+        #This is to keep the opportunity open that this function can be used directly and manually in the Python interpreter.
+        #In case it is not directly used by the user and the 'price' as an argument is not used,
+        #This function will use 'self.size_of_order[2]' value for the price of one share for each order.
+        
         #When the money amount is input for each order
-        if 'W' in size_of_order or 'w' in size_of_order:
-            self.size_of_order[0] = int(re.sub('[a-zA-Z]', '', size_of_order))
+        
+        # if 'W' in size_of_order[1] or 'w' in size_of_order[1]: -> this block is equivalent to the below one block of an if.
+        #     self.size_of_order[0] = int(re.sub('[a-zA-Z]', '', size_of_order))
+        #     self.size_of_order[1] = self._calculate_shares_of_order(price, self.size_of_order[0])
+        #     print(f'The amount of each order is set at {self.size_of_order[0]}KRW.'
+        #           f'It is {self.size_of_order[0]/self.current_cash*100}% of the total current cash, {self.current_cash}KRW.\n'
+        #           f'It can order {self.size_of_order[1]} share(s).')
+        
+        #In case the size_of_order is input directly from a user
+        if len(size_of_order) == 1:
+            size_of_order = self._number_character_splitter(size_of_order)
+            
+        if re.findall('[Ww]', size_of_order[1]):
+            self.size_of_order[0] = size_of_order[0]
             self.size_of_order[1] = self._calculate_shares_of_order(price, self.size_of_order[0])
             print(f'The amount of each order is set at {self.size_of_order[0]}KRW.'
                   f'It is {self.size_of_order[0]/self.current_cash*100}% of the total current cash, {self.current_cash}KRW.\n'
                   f'It can order {self.size_of_order[1]} share(s).')
             
         #When the percentage amount is input for each order
-        elif '%' in size_of_order:
-            self.size_of_order[0] = int(re.sub('%', '', size_of_order)) / 100 * self.current_cash
+        elif '%' in size_of_order[1]:
+            self.size_of_order[0] = size_of_order[0] / 100 * self.current_cash
             self.size_of_order[1] = self._calculate_shares_of_order(price, self.size_of_order[0])
             print(f'The amount of each order is set at {self.size_of_order[0]}KRW.'
-                  f'It is {size_of_order} of the total current cash, {self.current_cash}KRW.\n'
+                  f'It is {size_of_order[0]}% of the total current cash, {self.current_cash}KRW.\n'
                   f'It can order {self.size_of_order[1]} share(s).')
         
         #When the number of shares is input for each order
-        elif 'S' in size_of_order or 's' in size_of_order:
-            if price:
-                self.size_of_order[0] = int(re.sub('[a-zA-Z', '', size_of_order)) * self.orders[self.orders['OrderID']==self.buyID]['Price']
-                self.size_of_order[1] = size_of_order
+        elif re.findall('[Ss]', size_of_order[1]):
+        # elif 'S' in [size_of_order] or 's' in [size_of_order]:        
+            # if price:
+            if self.size_of_order[2]: #If the price of one share for each order has been input
+                # self.size_of_order[0] = int(re.sub('[a-zA-Z', '', size_of_order)) * self.orders[self.orders['OrderID']==self.buyID]['Price']
+                self.size_of_order[0] = size_of_order[0] * self.size_of_order[2] # In case this doesn't work. Use int(self.size_of_order[2])
+                self.size_of_order[1] = size_of_order[0]
                 print(f'The amount of each order is set at {self.size_of_order[0]}KRW.'
-                  f'It is {size_of_order} of the total current cash, {self.current_cash}KRW.\n'
-                  f'It can order {size_of_order[1]} share(s).')
+                  f'It is {self.size_of_order[0]/self.current_cash*100}% of the total current cash, {self.current_cash}KRW.\n'
+                  f'It can order {size_of_order[0]} share(s).')
             
             #When the number of shares is input but the price is not input
             else:
@@ -161,28 +186,42 @@ class InvestEval():
         
         #When the input is not made in the forms of 'W' or '%' or 'S'
         else:
-            print(f'Input Value Error. Please input the amount in the forms of "10000W" or "10000w" or "10%"')
+            print(f'Input Value Error. Please input the amount in the forms of "10000W" or "10000w" or "10%" or "50s"')
             return    
 
-    def make_order(self, order, price, size_of_order):
-        if size_of_order == 0:
+    def make_order(self, order, price=0, size_of_order=None):
+        if size_of_order == None:
             print('The amount of each order has not been set. Please input the WON amount or percentage amount.\nPlease input the amount in the forms of "10000W" or "10000w" or "10%"')
             return
-        self.set_size_of_order(size_of_order)
-        shares = self._calculate_shares_of_order(price, self.size_of_order)
-        #Reject the order if the current cash is less than 5%  after making an order 
-        if order == 'BUY' and self.current_cash < price*shares*1.05: 
-            #1.05 is multiplied for paying fees and taxes
+        elif price == 0:
+            print('The price of one share for each order has not been set. Please input the WON amount.')
+            return
+        
+        if order == 'BUY':
+            self.size_of_order[2] = price
+            size_of_order = self._number_character_splitter(size_of_order)
+            self.set_size_of_order(size_of_order)
+            shares = self._calculate_shares_of_order(price, self.size_of_order[0])
+            #Reject the order if the current cash is less than 5%  after making an order 
+            if self.current_cash < price*shares*1.05: 
+                #1.05 is multiplied for paying fees and taxes
+                
+                print('Cash is insufficient to make the order')
+                return 
+                #you can use the return statement without any parameter to exit a function        
+
+            self._log_orders(order, price, shares, datetime.today())
+            self._log_current_cash(order, price, shares)
+
+        elif order == 'SELL':
+            # self.size_of_order[2] = price            
+            self._log_orders(order, price, shares, datetime.today())
+            self._log_current_cash(order, price, shares)
             
-            print('Cash is insufficient to make the order')
-            return 
-            #you can use the return statement without any parameter to exit a function        
-
-        self._log_orders(order, price, shares, datetime.today())
-        self._log_current_cash(order, price, shares)
-
-        if order == 'SELL':
             self._calculate_profit(self.orders['OrderID'].values[-1])
+    
+    def _number_character_splitter(self, size_of_order):
+        return int(re.findall('^[0-9]+', size_of_order)[0]), re.findall('[a-zA-Z]+|%', size_of_order)[0]  
     
     def _calculate_shares_of_order(self, price, size_of_order):
         #_calculate_shares_of_order takes size_of_order, a local variable, instead of self.size_of_order, a global variable.
@@ -234,7 +273,7 @@ test = pd.DataFrame(a)
 test[test['CurrentCash']==100]['CurrentCash'].values
 re_invest = InvestEval(test)
 re_invest.get_orders()
-
+re_invest.make_order('BUY', '10000', '50s')
 
 
 #The following snippet of code is to understand and practice pandas dataframes by playing with them
@@ -263,3 +302,6 @@ if True:
         print('d')
 print('e')
 
+s = '5000000s'
+t = '50%'
+re.findall('[a-zA-Z]+|%', s)[0]
