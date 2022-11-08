@@ -1,5 +1,7 @@
 import pandas as pd
 from datetime import datetime
+import re
+from math import floor, ceil
 
 class InvestEval():
     def __init__(self, past_orders=pd.DataFrame([])):
@@ -15,6 +17,7 @@ class InvestEval():
         past_sellID = the same as above
         '''               
         self.orders = past_orders
+        self.size_of_order = 0
         
         #The following if blocks determine whether there are any past records passed on and process accordingly.
         
@@ -114,18 +117,39 @@ class InvestEval():
     
     def setcomm(self, comm=0.0014):
         self.commission = comm
+    
+    def set_size_of_order(self, size_of_order):
+        self.size_of_order = self._calculate_size_of_order(size_of_order)
+    
+    def _calculate_size_of_order(self, size_of_order):
+        if 'W' in size_of_order or 'w' in size_of_order:
+            self.size_of_order = int(re.sub('[a-zA-Z]', '', size_of_order))
+            print(f'The amount of each order is set at {self.size_of_order}KRW. It is {self.size_of_order/self.current_cash*100}% of the total current cash, {self.current_cash}KRW')
+        elif '%' in size_of_order:
+            self.size_of_order = int(re.sub('%', '', size_of_order)) / 100 * self.current_cash
+            print(f'The amount of each order is set at {self.size_of_order}KRW. It is {size_of_order}% of the total current cash, {self.current_cash}KRW')
+        else:
+            print(f'Input Value Error. Please input the amount in the forms of "10000W" or "10000w" or "10%"')
+            return    
 
-    def make_order(self, order, price, shares):
-        if order == 'BUY' and self.current_cash < price*shares*1.05: #1.05 is multiplied for paying fees and taxes
-            print('Cash in insufficient to make the order')
-            return #you can use the return statement without any parameter to exit a function
+    def make_order(self, order, price, size_of_order):
+        shares = self._calculate_shares_of_order(price, size_of_order)
+        #Reject the order if the current cash is less than 5%  after making an order 
+        if order == 'BUY' and self.current_cash < price*shares*1.05: 
+            #1.05 is multiplied for paying fees and taxes
+            
+            print('Cash is insufficient to make the order')
+            return 
+            #you can use the return statement without any parameter to exit a function        
 
         self._log_orders(order, price, shares, datetime.today())
         self._log_current_cash(order, price, shares)
 
         if order == 'SELL':
             self._calc_profit(self.orders['OrderID'].values[-1])
-
+    
+    def _calculate_shares_of_order(self, price, size_of_order):
+        return floor(size_of_order/price)
 
     def _log_orders(self, order, price, shares, time):       
         self._order_tracker(order)
@@ -199,3 +223,4 @@ if True:
     if True:
         print('d')
 print('e')
+
