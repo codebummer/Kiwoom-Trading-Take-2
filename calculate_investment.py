@@ -153,7 +153,7 @@ class InvestEval():
         self._log_current_cash(order, price, shares)
 
         if order == 'SELL':
-            self._calc_profit(self.orders['OrderID'].values[-1])
+            self._calculate_profit(self.orders['OrderID'].values[-1])
     
     def _calculate_shares_of_order(self, price, size_of_order):
         #_calculate_shares_of_order takes size_of_order, a local variable, instead of self.size_of_order, a global variable.
@@ -178,7 +178,7 @@ class InvestEval():
             self.sellID += 1
             self.orders['OrderID'] = [self.sellID]
              
-    def _calc_profit(self, order_ID):
+    def _calculate_profit(self, order_ID):
         rows = self._find_paired_order(order_ID)
         if len(rows) == 0:
             print('No order is made yet. Profits cannot be calculated.')
