@@ -65,7 +65,7 @@ class InvestEval():
     def make_order(self, order, price, shares):
         if order == 'BUY' and self.current_cash < price*shares*1.05: #1.05 is multiplied for paying fees and taxes
             print('Cash in insufficient to make the order')
-            return
+            return #you can use the return statement without any parameter to exit a function
 
         self._log_orders(order, price, shares, datetime.today())
         self._log_current_cash(order, price, shares)
