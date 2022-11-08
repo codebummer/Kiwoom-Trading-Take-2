@@ -17,7 +17,11 @@ class InvestEval():
         past_sellID = the same as above
         '''               
         self.orders = past_orders
-        self.size_of_order = 0
+        self.size_of_order = []
+        #self.size_of_order is a list that keeps 2 elements to track the amount or the number of shares for each order.
+        #self.size_of_order[0]: the amount of each order
+        #self.size_of_order[1]: the number of shares for each order. This will be the primary indicator to use in trading.
+        
         
         #The following if blocks determine whether there are any past records passed on and process accordingly.
         
@@ -124,13 +128,38 @@ class InvestEval():
     def set_size_of_order(self, size_of_order):
         self.size_of_order = self._calculate_size_of_order(size_of_order)
     
-    def _calculate_size_of_order(self, size_of_order):
+    def _calculate_size_of_order(self, price=0, size_of_order=0):
+        #When the money amount is input for each order
         if 'W' in size_of_order or 'w' in size_of_order:
-            self.size_of_order = int(re.sub('[a-zA-Z]', '', size_of_order))
-            print(f'The amount of each order is set at {self.size_of_order}KRW. It is {self.size_of_order/self.current_cash*100}% of the total current cash, {self.current_cash}KRW')
+            self.size_of_order[0] = int(re.sub('[a-zA-Z]', '', size_of_order))
+            self.size_of_order[1] = self._calculate_shares_of_order(price, self.size_of_order[0])
+            print(f'The amount of each order is set at {self.size_of_order[0]}KRW.'
+                  f'It is {self.size_of_order[0]/self.current_cash*100}% of the total current cash, {self.current_cash}KRW.\n'
+                  f'It can order {self.size_of_order[1]} share(s).')
+            
+        #When the percentage amount is input for each order
         elif '%' in size_of_order:
-            self.size_of_order = int(re.sub('%', '', size_of_order)) / 100 * self.current_cash
-            print(f'The amount of each order is set at {self.size_of_order}KRW. It is {size_of_order}% of the total current cash, {self.current_cash}KRW')
+            self.size_of_order[0] = int(re.sub('%', '', size_of_order)) / 100 * self.current_cash
+            self.size_of_order[1] = self._calculate_shares_of_order(price, self.size_of_order[0])
+            print(f'The amount of each order is set at {self.size_of_order[0]}KRW.'
+                  f'It is {size_of_order} of the total current cash, {self.current_cash}KRW.\n'
+                  f'It can order {self.size_of_order[1]} share(s).')
+        
+        #When the number of shares is input for each order
+        elif 'S' in size_of_order or 's' in size_of_order:
+            if price:
+                self.size_of_order[0] = int(re.sub('[a-zA-Z', '', size_of_order)) * self.orders[self.orders['OrderID']==self.buyID]['Price']
+                self.size_of_order[1] = size_of_order
+                print(f'The amount of each order is set at {self.size_of_order[0]}KRW.'
+                  f'It is {size_of_order} of the total current cash, {self.current_cash}KRW.\n'
+                  f'It can order {size_of_order[1]} share(s).')
+            
+            #When the number of shares is input but the price is not input
+            else:
+                print(f'The price of a share has not been input. Please set the price first.')
+                return
+        
+        #When the input is not made in the forms of 'W' or '%' or 'S'
         else:
             print(f'Input Value Error. Please input the amount in the forms of "10000W" or "10000w" or "10%"')
             return    
