@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 import re
-from math import floor, ceil
+from math import floor
 
 class InvestEval():
     def __init__(self, past_orders=pd.DataFrame([])):
