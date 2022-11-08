@@ -33,19 +33,19 @@ class InvestEval():
         else:
             #But, when there are only 'BUY' orders made
             if 'OrderID' in self.orders.columns: #if 'OrderID' in self.order: also works    
-                self.invested_amount = self.orders['InvestAmount'].values(-1)
-                self.current_cash = self.orders['CurrentCash'].values(-1)
+                self.invested_amount = self.orders['InvestAmount'].values[-1]
+                self.current_cash = self.orders['CurrentCash'].values[-1]
                 self.commission = 0.0014
                 
                 # buy_rows = self.orders[self.orders['OrderType']=='BUY']
-                # last_buy = buy_rows['OrderID'].values(-1)
+                # last_buy = buy_rows['OrderID'].values[-1]
                 # self.buyID = last_buy
                 # Those above three lines are equivalent to the below one line
-                self.buyID = self.orders[self.orders['OrderType']=='BUY']['OrderID'].values(-1)   
+                self.buyID = self.orders[self.orders['OrderType']=='BUY']['OrderID'].values[-1]   
                 
                 #When there are also 'SELL' orders made as well
                 if 'SELL' in self.orders.values:
-                    self.sellID = self.orders[self.orders['OrderType']=='SELL']['OrderID'].values(-1)
+                    self.sellID = self.orders[self.orders['OrderType']=='SELL']['OrderID'].values[-1]
 
                 
                 #When there are no 'SELL' orders made. This block works with the above only 'BUY' block.
@@ -58,8 +58,8 @@ class InvestEval():
                     # last_order_row = self.orders.loc[len(self.orders['OrderID'])-1]
                     # if last_order_row['OrderType'] == 'BUY':
                     #     self.buyID = last_buy
-                    # self.buyID = self.orders['OrderID'].values(-1)                   
-                    # self.sellID = self.orders['OrderID'].values(-1)  
+                    # self.buyID = self.orders['OrderID'].values[-1]                   
+                    # self.sellID = self.orders['OrderID'].values[-1]  
                     
 
             #When there are no past records of orders made, but only investment having been set.
@@ -68,8 +68,8 @@ class InvestEval():
                 # That makes pass' exit the entire 'if~elif' block including this one, when the immediately above 'elif' evaluates to True. 
                 # To avoid exiting the entire block including this one by the above 'pass',
                 # this 'if' block should be a separate block from the above big block of 'if'.
-                self.invested_amount = self.orders['InvestAmount'].values(-1)
-                self.current_cash = self.orders['CurrentCash'].values(-1)                   
+                self.invested_amount = self.orders['InvestAmount'].values[-1]
+                self.current_cash = self.orders['CurrentCash'].values[-1]                   
                 self.buyID, self.sellID = 0, 0
                 
                 self.commission = 0.0014
@@ -97,16 +97,16 @@ class InvestEval():
         # if order == 'CASHIN':
         #     self.orders['CurrentCash'] = cash
         # elif order == 'BUY':
-        #     self.current_cash -= self.orders['Price'].values(-1) * self.orders['Shares'].values(-1)
+        #     self.current_cash -= self.orders['Price'].values[-1] * self.orders['Shares'].values[-1]
         #     self.orders['CurrentCash'] = self.current_cash
         # elif order == 'SELL':
-        #     self.current_cash += self.orders['Price'].values(-1) * self.orders['Shares'].values(-1)
+        #     self.current_cash += self.orders['Price'].values[-1] * self.orders['Shares'].values[-1]
         #     self.orders['CurrentCash'] = self.current_cash
         '''
         When a new value is added to a dataframe, it can be indexed like 
         orders['Price'] = 1000
         However, when a currently existing value, especially the most recent one, is indexed, it should be located like 
-        order['Price'].values(-1)
+        order['Price'].values[-1]
         because the first form gives the entire column when you need one value from that column.
         When you use the second form, it will give you a Numpy array 
         which can be individually indexed with parentheses().
@@ -124,7 +124,7 @@ class InvestEval():
         self._log_current_cash(order, price, shares)
 
         if order == 'SELL':
-            self._calc_profit(self.orders['OrderID'].values(-1))
+            self._calc_profit(self.orders['OrderID'].values[-1])
 
 
     def _log_orders(self, order, price, shares, time):       
@@ -162,7 +162,15 @@ class InvestEval():
         # rowID = self.orders['OrderID'].str.findall(order_ID) : This was the second choice of the above implementation  
 
 invested = InvestEval()
+invested.get_orders()
 
+a = {'InvestAmount': [1000, 2000, 3000], 'CurrentCash': [100, 100, 300]}
+test = pd.DataFrame(a)
+'InvestAmount' in test
+'InvestAmount' in test.columns
+test[test['CurrentCash']==100]['CurrentCash'].values
+re_invest = InvestEval(test)
+re_invest.get_orders()
 
 
 
@@ -178,8 +186,7 @@ for key, value in test.items():
 'InvestAmount' in test.columns
 test[test['CurrentCash']==100]['CurrentCash'].values
 
-invested.get_orders()
-test_invest = InvestEval(test)
+
  
 if True:
     print('a')
