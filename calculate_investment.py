@@ -14,10 +14,13 @@ class InvestEval():
         past_sellID = the same as above
         '''
         self.orders = past_orders
-        self.buyID = 0 or self.orders['OrderID'].values(-1)
-        self.sellID = 0 or self.orders['OrderID'].values(-1)]       
-        self.invested_amount = 0 or self.orders['InvestAmount'].values(-1)
-        self.current_cash = 0 or self.orders['CurrentCash'].values(-1)
+        if self.orders.empty:
+            self.buyID, self.sellID, self.invested_amount, self.current_cash = 0, 0, 0, 0
+        else:          
+            self.buyID = self.orders['OrderID'].values(-1)
+            self.sellID = self.orders['OrderID'].values(-1)       
+            self.invested_amount = self.orders['InvestAmount'].values(-1)
+            self.current_cash = self.orders['CurrentCash'].values(-1)
 
     def get_orders(self):
         return self.orders       
