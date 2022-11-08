@@ -118,6 +118,9 @@ class InvestEval():
     def setcomm(self, comm=0.0014):
         self.commission = comm
     
+    def get_size_of_order(self):        
+        return self.size_of_order    
+    
     def set_size_of_order(self, size_of_order):
         self.size_of_order = self._calculate_size_of_order(size_of_order)
     
@@ -133,7 +136,11 @@ class InvestEval():
             return    
 
     def make_order(self, order, price, size_of_order):
-        shares = self._calculate_shares_of_order(price, size_of_order)
+        if size_of_order == 0:
+            print('The amount of each order has not been set. Please input the WON amount or percentage amount.\nPlease input the amount in the forms of "10000W" or "10000w" or "10%"')
+            return
+        self.set_size_of_order(size_of_order)
+        shares = self._calculate_shares_of_order(price, self.size_of_order)
         #Reject the order if the current cash is less than 5%  after making an order 
         if order == 'BUY' and self.current_cash < price*shares*1.05: 
             #1.05 is multiplied for paying fees and taxes
@@ -149,6 +156,9 @@ class InvestEval():
             self._calc_profit(self.orders['OrderID'].values[-1])
     
     def _calculate_shares_of_order(self, price, size_of_order):
+        #_calculate_shares_of_order takes size_of_order, a local variable, instead of self.size_of_order, a global variable.
+        #That's because it might be useful to use this method directly from the Python interpreter line,
+        #taking a direct input value from it, even though it is named with '_' before it.
         return floor(size_of_order/price)
 
     def _log_orders(self, order, price, shares, time):       
