@@ -23,7 +23,7 @@ class InvestEval():
             #self.invested amount: totoal amount of investment so far
             #self.current_cash: total cash amount not invested yet
             #self.commission: total amount of fees and taxes for making transactions and profits thereof
-            self.invested_amount, self.current_cash = 0, 0, 0, 0
+            self.invested_amount, self.current_cash = 0, 0
             self.commission = 0.0014
             
             #Decided to use separate counter or identifier variables for buy orders and sell orders
