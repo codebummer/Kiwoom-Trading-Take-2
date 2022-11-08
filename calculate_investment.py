@@ -2,17 +2,31 @@ import pandas as pd
 from datetime import datetime
 
 class InvestEval():
-    def __init__(self):
-        self.orders = pd.DataFrame([])
-        self.buyID, self.sellID = [], [] 
-        self.invested_amount, self.current_cash = 0, 0        
+    def __init__(self, past_orders=pd.DataFrame([])):
+        '''
+        In case there are past trasanction records and you want to continue with them for the investment you begin,
+        pass on past information when instantiating the object. Required information is as follows:
+        
+        past_orders = an object pointer for the dataframe that holds the entire past records
+          
+        past_buyID = a unique counter or ID numbers recorded to identify buy orders held in the above past_orders dataframe.
+ 
+        past_sellID = the same as above
+        '''
+        self.orders = past_orders
+        self.buyID = 0 or self.orders['OrderID'].values(-1)
+        self.sellID = 0 or self.orders['OrderID'].values(-1)]       
+        self.invested_amount = 0 or self.orders['InvestAmount'].values(-1)
+        self.current_cash = 0 or self.orders['CurrentCash'].values(-1)
+
+    def get_orders(self):
+        return self.orders       
     
     def setcash(self, cash):
         self.invested_amount += cash
         self.current_cash += cash
+        self.orders['InvestAmount'] = self.invested_amount
         self.orders['CurrentCash'] = self.current_cash
-        #Do other columns than CurrentCash have to be filled when extra cash is added without an order
-        #to make the dataframe work without an error?
 
     def _log_current_cash(self, order, price, shares):
         if order == 'BUY':
@@ -21,6 +35,8 @@ class InvestEval():
         elif order == 'SELL':
             self.current_cash += price * shares
             self.orders['CurrentCash'] = self.current_cash
+
+        self.orders['InvestAmount'] = self.invested_amount
 
         # if order == 'CASHIN':
         #     self.orders['CurrentCash'] = cash
@@ -53,7 +69,7 @@ class InvestEval():
 
         if order == 'SELL':
             self._calc_profit(self.orders['OrderID'])
-    
+
 
     def _log_orders(self, order, price, shares, time):
         self.orders['Time'] = time
