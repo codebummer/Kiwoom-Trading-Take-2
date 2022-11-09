@@ -32,6 +32,12 @@ class MyStrategy(bt.Strategy):
                     f'Fees {order.executed.comm:,.0f}KRW, '
                     f'Current Value {cerebro.broker.getvalue():,.0f}KRW'
                 )
+                # f'BUY: Price {order.executed.price:,.0f}KRW, Bought {order.executed.size:,.0f} shares, Fees {order.executed.comm:,.0f}KRW, Current Value {cerebro.broker.getvalue():,.0f}KRW'
+                # The above one line is the same as the multiple f-string lines above.
+                
+                # f'{10000000:,}' is same as format(10000000, ',')
+                # f'{integer:,}' or format(integer, ',') will display integer numbers with ',' for each three digit.
+                
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
             else:
