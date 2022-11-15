@@ -15,9 +15,11 @@ def comm_connect(err_code):
 
 app = QApplication(sys.argv)
 
-kiwoom = QAxWidget('KHOPENAPI.KHOpenAPICtrl.1')
+#QAxWidget(Program ID) is same as QAxWidget.setControl(Program ID)
+kiwoom = QAxWidget('KHOPENAPI.KHOpenAPICtrl.1') 
 kiwoom.OnEventConnect.connect(comm_connect)
-login_loop = QEventLoop()
+#QtCore.QEventLoop
+login_loop = QEventLoop() 
 
 kiwoom.dynamicCall('CommConnect')
 login_loop.exec_()
