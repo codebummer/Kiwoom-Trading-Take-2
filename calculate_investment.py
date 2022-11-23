@@ -200,7 +200,12 @@ class Kiwoom(QAxWidget):
             for fid in fidlist:
                 add[self.orders_dict['호가구분'][fid]] = self._get_chejan_data(fid)
             print('\n\nhogagubun in receive chejan data: ', add)
-        
+    
+    def _domestic_balance_chage(self, itemcnt, fidlist):
+        for item in itemcnt:
+            for fid in fidlist:
+                print('\n\n_domestic_balance_chanage: -> gubun 1 received in _receive_chejan_data: \n', self._get_chejan_data(fid))
+       
     def _realtype_stock_status(self, code):
         add= {}
         fidlist = self.fids_dict['주식시세']
@@ -266,7 +271,7 @@ class Kiwoom(QAxWidget):
     def _real_chejan_placed_made(self, itemcnt, fidlist):        
         for idx in itemcnt:
             for fid in fidlist:
-                print(self.dynamicCall('GetChejanData(int)', fid))
+                print('\n\n_real_chejan_placed_made: -> gubun 0 received in _receive_chejan_data: \n', self._get_chejan_data(fid))
     
     def _get_chejan_data(self, fid):
         return self.dynamicCall('GetChejanData(int)', fid)
@@ -507,7 +512,7 @@ kiwoom = Kiwoom()
 type(kiwoom.account_num)
 
 
-# kiwoom.make_order('삼성전자', 65000, 1, '03')
+kiwoom.make_order('삼성전자', 60900, 1, '03')
 # kiwoom.request_minute_chart('삼성전자', 3)
 # kiwoom.request_mass_data('삼성전자', 'NAVER', '컬러레이', '현대차', '카카오', 'LG에너지솔루션')
 
