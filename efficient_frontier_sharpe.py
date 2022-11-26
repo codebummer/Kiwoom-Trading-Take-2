@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pandas_datareader.data as web
 from datetime import datetime
-import os, json
+import os, json, sqlite3
 # from Investar import Analyzer
 
 os.chdir(r'D:\myprojects\TradingDB')
@@ -86,11 +86,14 @@ def make_portfolio(stocks):
     #returns the efficient frontier weight dataframe
     portfolio = calculate_efficient_weights(held.values(), possibilities)
     max_sharpe, min_risks = sharpe(portfolio)
-    print('\n\nMaximun Sharpe Portfolio: \n', max_sharpe, '\n\nMinimum Risks Portfolio: \n', min_risks)
+    print('\n\nMaximun Sharpe Portfolio: \n', max_sharpe, '\n\nMinimum Risks Portfolio: \n', min_risks)   
+    df = pd.concat([max_sharpe, min_risks], ignore_index=True)    
+    with sqlite3.connect('sharpe_risks_portfolio.db') as file:
+        df.to_sql(f'Portfolio_Optimized_{datetime.today()}', file, if_exists='append')
     # portfolio = portfolio[['Returns', 'Risks']+[stock for stock in held.values()]] -> duplicate. Don't use
     visualize(portfolio, max_sharpe, min_risks)
 
 
-MONTECARLO_REPEAT = 60_000 
+MONTECARLO_REPEAT = 70_000 
 #input stock names as a one long string quoted by '' or "" and seperate each names with ,
 make_portfolio('삼성전자, 현대차, LG전자, SK텔레콤, POSCO홀딩스, 신한지주, 하나금융지주')
