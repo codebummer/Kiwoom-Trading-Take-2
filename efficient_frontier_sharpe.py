@@ -28,13 +28,13 @@ def fetch_prices(held_dict):
     return pd.DataFrame(add).astype('float64')
 
 def montecarlo(held_prices):
+    global MONTECARLO_REPEAT
     BIZDAYS_A_YEAR = 252
     daily_ret = held_prices.pct_change()
     annual_ret = daily_ret.mean() * BIZDAYS_A_YEAR
     daily_cov = daily_ret.cov()
     annual_cov = daily_cov * BIZDAYS_A_YEAR
     add = {'Returns':[], 'Risks':[], 'Weights':[], 'Sharpe':[]}
-    MONTECARLO_REPEAT = 60_000
     for _ in range(MONTECARLO_REPEAT):
         weights = np.random.random(len(held_prices.columns)) #len(held_prices.columns) = held_prices.shape[1]
         weights /= np.sum(weights)
@@ -61,14 +61,17 @@ def sharpe(data):
     return max_sharpe, min_risks
 
 def visualize(portfolio, max_sharpe, min_risks):    
+    global MONTECARLO_REPEAT
     portfolio.plot.scatter(x='Risks', y='Returns', c='Sharpe', cmap='viridis', 
         edgecolors='k', figsize=(11,7), grid=True)
     plt.scatter(x=max_sharpe['Risks'], y=max_sharpe['Returns'], c='r', marker='*', s=300, label='Maximum Sharpe')
     plt.scatter(x=min_risks['Risks'], y=min_risks['Returns'], c='r', marker='X', s=200, label='Minimum Risks')
     plt.title('Efficient Frontier / Portfolio Optimization')
+    plt.suptitle(f'MONTE CARLO SIMULATED #{MONTECARLO_REPEAT:,}')
     plt.xlabel('Risks')
     plt.ylabel('Expected Returns')
-    plt.legend() #with "scatter(..., label='....')", plt.legend() will actually show label as a legend in display
+    #with "scatter(..., label='....')", plt.legend() will actually show label as a legend in display
+    plt.legend()
     plt.show()
 
 def make_portfolio(stocks):
@@ -87,6 +90,7 @@ def make_portfolio(stocks):
     # portfolio = portfolio[['Returns', 'Risks']+[stock for stock in held.values()]] -> duplicate. Don't use
     visualize(portfolio, max_sharpe, min_risks)
 
+
+MONTECARLO_REPEAT = 60_000 
 #input stock names as a one long string quoted by '' or "" and seperate each names with ,
 make_portfolio('삼성전자, 현대차, LG전자, SK텔레콤, POSCO홀딩스, 신한지주, 하나금융지주')
-
