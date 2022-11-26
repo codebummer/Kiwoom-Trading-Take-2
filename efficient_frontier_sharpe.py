@@ -63,11 +63,12 @@ def sharpe(data):
 def visualize(portfolio, max_sharpe, min_risks):    
     portfolio.plot.scatter(x='Risks', y='Returns', c='Sharpe', cmap='viridis', 
         edgecolors='k', figsize=(11,7), grid=True)
-    plt.scatter(x=max_sharpe['Risks'], y=max_sharpe['Returns'], c='r', marker='*', s=300)
-    plt.scatter(x=min_risks['Risks'], y=min_risks['Returns'], c='r', marker='X', s=200)
+    plt.scatter(x=max_sharpe['Risks'], y=max_sharpe['Returns'], c='r', marker='*', s=300, label='Maximum Sharpe')
+    plt.scatter(x=min_risks['Risks'], y=min_risks['Returns'], c='r', marker='X', s=200, label='Minimum Risks')
     plt.title('Efficient Frontier / Portfolio Optimization')
     plt.xlabel('Risks')
     plt.ylabel('Expected Returns')
+    plt.legend() #with "scatter(..., label='....')", plt.legend() will actually show label as a legend in display
     plt.show()
 
 def make_portfolio(stocks):
